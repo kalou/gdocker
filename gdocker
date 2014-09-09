@@ -33,4 +33,4 @@ if __name__ == '__main__':
     unixpipe.setup(remote_addr, 'root', '/var/run/docker.sock')
 
     subprocess.call(['docker', '-H', 
-        'tcp://localhost:%d' % unixpipe.service_port()] + sys.argv[1:])
+        'tcp://localhost:%d' % unixpipe.service_port] + sys.argv[1:])

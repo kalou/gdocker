@@ -8,9 +8,7 @@ import subprocess
 import sys
 import time
 
-def service_port():
-    ## Impl. random stuff checks
-    return 12042
+service_port = 12042
 
 class FdPipe:
     """Connect two pairs of file objects"""
@@ -120,7 +118,7 @@ def setup(addr, user, remote_path, local_key=None):
     test_sock = socket.socket(socket.AF_INET,
         socket.SOCK_STREAM, socket.IPPROTO_TCP)
     try:
-        test_sock.connect(('127.0.0.1', service_port()))
+        test_sock.connect(('127.0.0.1', service_port))
         test_sock.close()
         return
     except socket.error, e:
@@ -129,8 +127,7 @@ def setup(addr, user, remote_path, local_key=None):
 
     scp(addr, user, __file__, '~/unixpipe', local_key)
 
-    ssh_call = ['ssh', '-fL%d:127.0.0.1:%d' % (service_port(), 
-                                            service_port()),
+    ssh_call = ['ssh', '-fL%d:127.0.0.1:%d' % (service_port, service_port),
         '-o ExitOnForwardFailure=yes',
         '%s@%s' % (user, addr,), 'python', '~/unixpipe', 
             'server', remote_path]
@@ -142,4 +139,4 @@ def setup(addr, user, remote_path, local_key=None):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'server':
-        tcp4_to_unix(service_port(), sys.argv[2])
+        tcp4_to_unix(service_port, sys.argv[2])
