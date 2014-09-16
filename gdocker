@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-import unixpipe
-from gandi.cli.core.base import UsageError
-from gandi.cli.modules.iaas import Iaas
-
+import os
 import socket
 import subprocess
 import sys
+
+from gandi.cli.core.base import UsageError
+from gandi.cli.modules.iaas import Iaas
+
+import unixpipe
 
 if __name__ == '__main__':
     try:
@@ -30,7 +32,8 @@ if __name__ == '__main__':
                 remote_addr = ip['ip']
 
     #XXX key
-    unixpipe.setup(remote_addr, 'root', '/var/run/docker.sock')
+    port = unixpipe.setup(remote_addr, 'root', '/var/run/docker.sock')
+    os.environ['DOCKER_HOST'] = 'tcp://localhost:%d' % port
 
-    subprocess.call(['docker', '-H', 
-        'tcp://localhost:%d' % unixpipe.service_port] + sys.argv[1:])
+    sys.argv[0] = 'docker'
+    subprocess.call(sys.argv)
